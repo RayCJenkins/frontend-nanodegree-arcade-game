@@ -6,8 +6,9 @@ var Enemy = function(startX, startY) {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+    this.spriteWidth = 100;
     this.x = -100;
-    this.y = this.getRandomLanePosition();
+    this.lanePosition = this.getRandomLane();
     this.speed = this.getRandomSpeed();
 };
 
@@ -21,29 +22,29 @@ Enemy.prototype.update = function(dt) {
     if (this.x > 500){
         this.x = -100;
     }
-    //if (this.isTouchingPlayer()){
-    //    player.resetPlayerToStartPosition();
-    //}
-    //console.log(this.x);
+    if (this.isTouchingPlayer()){
+        player.resetPlayerToStartPosition();
+    }
 };
 
 Enemy.prototype.isTouchingPlayer = function() {
-    return (this.x)
+    return (this.lanePosition == player.lanePosition) && (player.x < (this.x + 80)) &&
+        (player.x > (this.x - 80));
 }
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    ctx.drawImage(Resources.get(this.sprite), this.x, lanePositions[this.lanePosition]);
 };
 
 Enemy.prototype.getRandomStartingPosition = function() {
     return 1 - Math.floor((Math.random() * 1000));
 }
 
-Enemy.prototype.getRandomLanePosition = function() {
-    var lane = Math.floor((Math.random() * 3) + 1);
-    console.log(lane);
-    return lanePositions[lane];
+Enemy.prototype.getRandomLane = function() {
+    return Math.floor((Math.random() * 3) + 1);
+    // console.log(lane);
+    // return lanePositions[lane];
 }
 
 Enemy.prototype.getRandomSpeed = function() {
@@ -61,15 +62,20 @@ var Player = function(){
 Player.prototype.resetPlayerToStartPosition = function() {
     this.x = 200;
     this.lanePosition = maxLane;
-    // this.y = lanePositions[this.lane];
 }
 
 Player.prototype.render = function(){
-    ctx.drawImage(Resources.get(this.sprite), this.x, lanePositions[this.lanePosition]); //this.y);
+    ctx.font = "bold 36px Impact";
+    ctx.textAlign = "center";
+    ctx.textBaseline ="top";
+    ctx.fillStyle = 'white';
+    ctx.fillText("SCORE: " + Score, 100, 100);
+    ctx.drawImage(Resources.get(this.sprite), this.x, lanePositions[this.lanePosition]);
 }
 
 Player.prototype.update = function(dt){
     if (this.lanePosition == 0){
+        Score++;
         this.resetPlayerToStartPosition();
     }
 }
@@ -93,8 +99,9 @@ Player.prototype.handleInput = function(keycode){
             this.lanePosition = this.lanePosition + 1;
             break;
     }
-    console.log(maxPlayerPositionX+','+minPlayerPositionX);
-    console.log(this.x+','+this.lanePosition+'('+lanePositions[this.lanePosition]+')');
+    //console.log(this.sprite);
+    //console.log(maxPlayerPositionX+','+minPlayerPositionX);
+    console.log('x='+this.x+','+this.lanePosition+'('+lanePositions[this.lanePosition]+')');
     if ((this.x > maxPlayerPositionX) || (this.x < minPlayerPositionX)) {
         console.log('x='+this.x);
         this.x = oldX
@@ -102,17 +109,13 @@ Player.prototype.handleInput = function(keycode){
     if ((this.lanePosition < minLane) || (this.lanePosition > maxLane)){
         this.lanePosition = oldLane;
     }
-    // if ((this.y > maxPlayerPositionY) || (this.y < minPlayerPositionY)) {
-        // console.log('y='+this.y);
-        // this.y = oldY
-    // }
 }
 
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var lanePositions = [5, 50, 145, 225, 320, 405];
+var lanePositions = [5, 60, 145, 225, 320, 405];
 horizontalDelta = 100;
 verticalDelta = 83;
 minPlayerPositionX = 0;
@@ -126,10 +129,8 @@ allEnemies.push(new Enemy());
 allEnemies.push(new Enemy());
 allEnemies.push(new Enemy());
 allEnemies.push(new Enemy());
-allEnemies.push(new Enemy());
-allEnemies.push(new Enemy());
-allEnemies.push(new Enemy());
 var player = new Player();
+var Score = 0;
 
 
 
