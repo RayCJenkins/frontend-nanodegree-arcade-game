@@ -43,17 +43,13 @@ Enemy.prototype.getRandomStartingPosition = function() {
 
 Enemy.prototype.getRandomLane = function() {
     return Math.floor((Math.random() * 3) + 1);
-    // console.log(lane);
-    // return lanePositions[lane];
 }
 
 Enemy.prototype.getRandomSpeed = function() {
     return Math.floor((Math.random() * 200) + 20);
 }
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+// This class requires an update(), render() and a handleInput() method.
 var Player = function(){
     this.sprite = 'images/char-boy.png';
     this.resetPlayerToStartPosition();
@@ -81,10 +77,9 @@ Player.prototype.update = function(dt){
 }
 
 Player.prototype.handleInput = function(keycode){
-    //constants
     var oldX = this.x;
     var oldLane = this.lanePosition;
-    console.log('VD='+verticalDelta+', HD='+horizontalDelta);
+
     switch(keycode){
         case 'left':
             this.x = this.x - horizontalDelta;
@@ -99,11 +94,8 @@ Player.prototype.handleInput = function(keycode){
             this.lanePosition = this.lanePosition + 1;
             break;
     }
-    //console.log(this.sprite);
-    //console.log(maxPlayerPositionX+','+minPlayerPositionX);
-    console.log('x='+this.x+','+this.lanePosition+'('+lanePositions[this.lanePosition]+')');
+
     if ((this.x > maxPlayerPositionX) || (this.x < minPlayerPositionX)) {
-        console.log('x='+this.x);
         this.x = oldX
     }
     if ((this.lanePosition < minLane) || (this.lanePosition > maxLane)){
@@ -113,11 +105,8 @@ Player.prototype.handleInput = function(keycode){
 
 
 // Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
 var lanePositions = [5, 60, 145, 225, 320, 405];
 horizontalDelta = 100;
-verticalDelta = 83;
 minPlayerPositionX = 0;
 maxPlayerPositionX = 400;
 minLane = 0;
