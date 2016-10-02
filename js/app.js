@@ -1,11 +1,14 @@
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(startX, startY) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+    this.x = -100;
+    this.y = this.getRandomLanePosition();
+    this.speed = this.getRandomSpeed();
 };
 
 // Update the enemy's position, required method for game
@@ -14,21 +17,119 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+    this.x = this.x + (this.speed * dt);
+    if (this.x > 500){
+        this.x = -100;
+    }
+    //if (this.isTouchingPlayer()){
+    //    player.resetPlayerToStartPosition();
+    //}
+    //console.log(this.x);
 };
+
+Enemy.prototype.isTouchingPlayer = function() {
+    return (this.x)
+}
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+Enemy.prototype.getRandomStartingPosition = function() {
+    return 1 - Math.floor((Math.random() * 1000));
+}
+
+Enemy.prototype.getRandomLanePosition = function() {
+    var lane = Math.floor((Math.random() * 3) + 1);
+    console.log(lane);
+    return lanePositions[lane];
+}
+
+Enemy.prototype.getRandomSpeed = function() {
+    return Math.floor((Math.random() * 200) + 20);
+}
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
+var Player = function(){
+    this.sprite = 'images/char-boy.png';
+    this.resetPlayerToStartPosition();
+}
+
+Player.prototype.resetPlayerToStartPosition = function() {
+    this.x = 200;
+    this.lanePosition = maxLane;
+    // this.y = lanePositions[this.lane];
+}
+
+Player.prototype.render = function(){
+    ctx.drawImage(Resources.get(this.sprite), this.x, lanePositions[this.lanePosition]); //this.y);
+}
+
+Player.prototype.update = function(dt){
+    if (this.lanePosition == 0){
+        this.resetPlayerToStartPosition();
+    }
+}
+
+Player.prototype.handleInput = function(keycode){
+    //constants
+    var oldX = this.x;
+    var oldLane = this.lanePosition;
+    console.log('VD='+verticalDelta+', HD='+horizontalDelta);
+    switch(keycode){
+        case 'left':
+            this.x = this.x - horizontalDelta;
+            break;
+        case 'up':
+            this.lanePosition = this.lanePosition - 1;
+            break;
+        case 'right':
+            this.x = this.x + horizontalDelta;
+            break;
+        case 'down':
+            this.lanePosition = this.lanePosition + 1;
+            break;
+    }
+    console.log(maxPlayerPositionX+','+minPlayerPositionX);
+    console.log(this.x+','+this.lanePosition+'('+lanePositions[this.lanePosition]+')');
+    if ((this.x > maxPlayerPositionX) || (this.x < minPlayerPositionX)) {
+        console.log('x='+this.x);
+        this.x = oldX
+    }
+    if ((this.lanePosition < minLane) || (this.lanePosition > maxLane)){
+        this.lanePosition = oldLane;
+    }
+    // if ((this.y > maxPlayerPositionY) || (this.y < minPlayerPositionY)) {
+        // console.log('y='+this.y);
+        // this.y = oldY
+    // }
+}
 
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+var lanePositions = [5, 50, 145, 225, 320, 405];
+horizontalDelta = 100;
+verticalDelta = 83;
+minPlayerPositionX = 0;
+maxPlayerPositionX = 400;
+minLane = 0;
+maxLane = 5;
+var allEnemies = [];
+allEnemies.push(new Enemy());
+allEnemies.push(new Enemy());
+allEnemies.push(new Enemy());
+allEnemies.push(new Enemy());
+allEnemies.push(new Enemy());
+allEnemies.push(new Enemy());
+allEnemies.push(new Enemy());
+allEnemies.push(new Enemy());
+allEnemies.push(new Enemy());
+var player = new Player();
 
 
 
